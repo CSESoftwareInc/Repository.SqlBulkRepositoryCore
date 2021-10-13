@@ -14,7 +14,7 @@ This repository performs the following steps to streamline create operations:
 	- The CreatedDate parameter is set has ms values removed to overcome Sql weakness in datetime and datetime2 queries
 	- The CreatedDate parameter is used to query the database and return all objects for the batches created and return them
 
-A Create operation has the following signature:
+A Create operation has the following signature:  
 await [_name of repository property_].BulkCreateAsync([_list of entities to create_]);
 
 An example would be:
@@ -23,7 +23,7 @@ var entities = new List<FamilyTree>(); // Some list of entities
 await _repository.BulkCreateAsync(entities);
 ```
 
-A Create and Return operation has the following signature:
+A Create and Return operation has the following signature:  
 var [_name of return property_] = await [_name of repository property_].BulkCreateAndReturnAsync<[_type of entity_], [_Id type for entity_]>([_list of entities to create_]);
 
 An example would be:
@@ -45,8 +45,8 @@ This repository performs the following steps to streamline select operations:
 - All batches returned are consolidated and returned as a single list
 - The Temporary Table is dropped to ensure it does not persist beyond the transaction
 
-A Read operation has the following signature:
-var [_name of return property_] = await [_name of repository property_].BulkSelectAsync(new [_entity to be selected_], [_anonymous list of properties to select by_]);
+A Read operation has the following signature:  
+var [_name of return property_] = await [_name of repository property_].BulkSelectAsync(new [_entity to be selected_], [_anonymous list of properties to select by_]);  
 *Note:* The anonymous list of properties should contain properties where the _property name_ matches that of a property on the entity, the _property type_ matches the type of that property on the entity, and the _property value_ matches what you wish to select by.
 
 An example would be:
@@ -67,8 +67,8 @@ This repository performs the following steps to streamline update operations:
 	- The Temporary table has values deleted from it to facilitate additional batches without stacking values
 - The Temporary Table is dropped to ensure it does not persist beyond the transaction
 
-An Update operation has the following signature:
-await [_name of repository property_].BulkUpdateAsync(new [_entity to be updated_], [_anonymous list of properties to update by_]);
+An Update operation has the following signature:  
+await [_name of repository property_].BulkUpdateAsync(new [_entity to be updated_], [_anonymous list of properties to update by_]);  
 *Note:* The anonymous list of properties must contain the Id field of the entity. Additionally, it should contain properties where the _property name_ matches that of a property on the entity, the _property type_ matches the type of that property on the entity, and the _property value_ matches what you wish to select by.
 
 An example would be
@@ -89,8 +89,8 @@ This repository performs the following steps to streamline delete operations:
 	- The Temporary table has values deleted from it to facilitate additional batches without stacking values
 - The Temporary Table is dropped to ensure it does not persist beyond the transaction
 
-A Delete operation has the following signature:
-await [_name of repository property_].BulkDeleteAsync(new [_entity to be deleted_], [_anonymous list of properties to delete by_]);
+A Delete operation has the following signature:  
+await [_name of repository property_].BulkDeleteAsync(new [_entity to be deleted_], [_anonymous list of properties to delete by_]);  
 *Note:* The anonymous list of properties should contain properties where the _property name_ matches that of a property on the entity, the _property type_ matches the type of that property on the entity, and the _property value_ matches what you wish to select by.
 
 An example would be:
