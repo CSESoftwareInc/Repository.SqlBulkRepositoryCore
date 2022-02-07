@@ -7,7 +7,7 @@
     <Version>1.0.0</Version>
     <Description>An Entity Framework Core repository utilizing SqlBulkCopy to perform operations on large datasets.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Copyright>2021 CSE Software, Inc.</Copyright>
+    <Copyright>2022 CSE Software, Inc.</Copyright>
     <PackageProjectUrl>https://github.com/CSESoftwareInc/Repository.SqlBulkRepositoryCore</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CSESoftwareInc/Repository.SqlBulkRepositoryCore.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
