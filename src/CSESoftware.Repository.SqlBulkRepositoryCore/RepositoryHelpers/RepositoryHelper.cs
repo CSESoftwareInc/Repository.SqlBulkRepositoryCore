@@ -160,9 +160,11 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers
             where TEntity : IEntity
         {
             var primaryKeyColumns = GetPrimaryKeyNames<TEntity>(context);
+            var primaryKeyProperties = entityProperties.Where(x => primaryKeyColumns.Contains(x.Key))
+                .ToDictionary(x => x.Key, x => x.Value);
 
             var returnList = updateProperties.Where(x =>
-                    !primaryKeyColumns.Contains(x) &&
+                    !primaryKeyProperties.ContainsKey(x) && !primaryKeyProperties.Values.Contains(x) &&
                     (entityProperties.ContainsKey(x) || entityProperties.Values.Contains(x)))
                 .Select(prop => ConstructMatchString(prop, entityProperties)).ToList();
 
