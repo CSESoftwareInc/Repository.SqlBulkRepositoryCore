@@ -11,6 +11,7 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestDatabase
         }
 
         public DbSet<FamilyTree> FamilyTrees { get; set; }
+        public DbSet<FamilyHome> FamilyHomes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,6 +25,11 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestDatabase
                 .WithMany(p => p.MaternalChildren)
                 .HasForeignKey(pp => pp.MotherId);
 
+            modelBuilder.Entity<FamilyTree>()
+                .HasOne(pp => pp.Home)
+                .WithMany(p => p.Families)
+                .HasForeignKey(pp => pp.HomeId);
+
             modelBuilder.Entity<FamilyTreeLink>()
                 .HasKey(x => new { x.PrimarySiblingId, x.SecondarySiblingId });
 
@@ -36,6 +42,15 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestDatabase
                 .HasOne(pp => pp.SecondarySibling)
                 .WithMany(p => p.Siblings)
                 .HasForeignKey(pp => pp.SecondarySiblingId);
+
+            modelBuilder.Entity<FamilyHome>()
+                .ToTable("Home_Alpha");
+            modelBuilder.Entity<FamilyHome>()
+                .Property(x => x.Id).HasColumnName("HomeId");
+            modelBuilder.Entity<FamilyHome>()
+                .Property(x => x.Name).HasColumnName("Home_Name");
+            modelBuilder.Entity<FamilyHome>()
+                .Property(x => x.Address).HasColumnName("Home_Address");
 
             var cascadeFKs = modelBuilder.Model.GetEntityTypes()
                 .SelectMany(t => t.GetForeignKeys())
