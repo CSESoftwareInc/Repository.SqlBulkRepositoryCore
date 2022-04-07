@@ -236,7 +236,9 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore
 
                     var parameters =
                         RepositoryHelper.AssembleParameters(Context, entityToUpdate, updateByValues.ElementAt(0), type);
-                    ExecuteUpdateQuery<TEntity>(command, parameters);
+                    var keyString =
+                        RepositoryHelper.GetUpdateKeyString(Context, entityToUpdate, updateByValues.ElementAt(0));
+                    ExecuteUpdateQuery<TEntity>(command, parameters, keyString);
                     success = true;
                 }
                 catch (SqlException ex)
@@ -314,13 +316,13 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore
             return Context.Set<TEntity>().FromSqlRaw(queryString);
         }
 
-        private void ExecuteUpdateQuery<TEntity>(IDbCommand command, string parameters)
+        private void ExecuteUpdateQuery<TEntity>(IDbCommand command, string parameters, string keyString)
             where TEntity : IEntity
         {
             var destinationTableName = Context.GetTableName<TEntity>();
 
             command.CommandText =
-                $"UPDATE O SET {parameters} FROM {destinationTableName} O INNER JOIN {ConstUpdateTableName} T ON O.Id = T.Id";
+                $"UPDATE O SET {parameters} FROM {destinationTableName} O INNER JOIN {ConstUpdateTableName} T ON {keyString}";
             command.ExecuteNonQuery();
         }
 
