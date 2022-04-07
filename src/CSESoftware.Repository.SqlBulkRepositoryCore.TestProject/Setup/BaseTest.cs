@@ -27,6 +27,14 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestProject.Setup
                 await Repository.BulkDeleteAsync(new FamilyTree(), treesToDelete);
         }
 
+        internal async Task TearDownAsync(IEnumerable<FamilyHome> homes)
+        {
+            var homesToDelete = homes.Select(x => new { x.Id }).ToList();
+            
+            if (homesToDelete.Any())
+                await Repository.BulkDeleteAsync(new FamilyHome(), homesToDelete);
+        }
+
         internal static List<FamilyTreeLink> GetDistinctLinks(IReadOnlyCollection<FamilyTree> trees)
         {
             return trees.Where(x => x.Siblings != null).SelectMany(x => x.Siblings)

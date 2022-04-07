@@ -86,6 +86,51 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestProject
             await TearDownAsync(trees, links);
         }
 
+        [Fact]
+        public async Task SelectMismatchedColumnTest()
+        {
+            var homes = await HomeStartUpAsync();
+            var selectValues = homes.Select(x => new { x.Id, x.Name }).ToList();
+            var returnValues = await Repository.BulkSelectAsync(new FamilyHome(), selectValues);
+
+            Assert.NotNull(returnValues);
+            Assert.NotEmpty(returnValues);
+            foreach (var value in returnValues)
+                Assert.Contains(value.Id, homes.Select(x => x.Id));
+
+            await TearDownAsync(homes);
+        }
+
+        [Fact]
+        public async Task SelectMismatchedColumnTest_WithIdColumnName()
+        {
+            var homes = await HomeStartUpAsync();
+            var selectValues = homes.Select(x => new { HomeId = x.Id, x.Address }).ToList();
+            var returnValues = await Repository.BulkSelectAsync(new FamilyHome(), selectValues);
+
+            Assert.NotNull(returnValues);
+            Assert.NotEmpty(returnValues);
+            foreach (var value in returnValues)
+                Assert.Contains(value.Id, homes.Select(x => x.Id));
+
+            await TearDownAsync(homes);
+        }
+
+        [Fact]
+        public async Task SelectMismatchedColumnTest_WithSelectColumnName()
+        {
+            var homes = await HomeStartUpAsync();
+            var selectValues = homes.Select(x => new { x.Id, Home_Name = x.Name }).ToList();
+            var returnValues = await Repository.BulkSelectAsync(new FamilyHome(), selectValues);
+
+            Assert.NotNull(returnValues);
+            Assert.NotEmpty(returnValues);
+            foreach (var value in returnValues)
+                Assert.Contains(value.Id, homes.Select(x => x.Id));
+
+            await TearDownAsync(homes);
+        }
+
         private async Task<List<FamilyTree>> StartUpAsync(int numberOfTrees = 100,
             string gender = "Tomato", bool isAlive = true)
         {
@@ -104,6 +149,14 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestProject
             await Repository.BulkCreateAsync(links);
 
             return (trees, links);
+        }
+
+        private async Task<List<FamilyHome>> HomeStartUpAsync()
+        {
+            var homes = DataProvider.GetSimpleHomes(100);
+            await Repository.BulkCreateAsync(homes);
+
+            return homes;
         }
 
         private static IQuery<FamilyTree> GetTreeQuery()
