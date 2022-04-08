@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <Authors>CSESoftware, Inc.</Authors>
     <Company>CSESoftware, Inc.</Company>
-    <Version>1.0.1-beta2</Version>
+    <Version>1.0.1</Version>
     <Description>An Entity Framework Core repository utilizing SqlBulkCopy to perform operations on large datasets.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Copyright>2022 CSE Software, Inc.</Copyright>
