@@ -43,6 +43,16 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestProject.Setup
             return trees;
         }
 
+        internal static List<FamilyHome> GetSimpleHomes(int numberOfHomes = 10, string name = "Our House",
+            string address = "555 Quantum Place")
+        {
+            var homes = new List<FamilyHome>();
+            for (var i = 0; i < numberOfHomes; i++)
+                homes.Add(GetHome($"{name} {i}", $"{address} Apt #{i}"));
+
+            return homes;
+        }
+
         private static FamilyTree GetTree(DateTime birthdate, string gender = "Tomato", bool isAlive = true)
         {
             return new FamilyTree
@@ -85,6 +95,20 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestProject.Setup
             }).ToList();
 
             return tree;
+        }
+
+        private static FamilyHome GetHome(string name, string address)
+        {
+            return new FamilyHome
+            {
+                Id = Guid.NewGuid(),
+                IsActive = true,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+                Name = name,
+                Address = address,
+                Families = new List<FamilyTree>()
+            };
         }
     }
 }

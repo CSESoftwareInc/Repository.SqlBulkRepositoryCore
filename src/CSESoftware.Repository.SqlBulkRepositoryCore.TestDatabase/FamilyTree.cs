@@ -16,6 +16,9 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestDatabase
         public Guid MotherId { get; set; }
         public virtual FamilyTree Mother { get; set; }
 
+        public Guid HomeId { get; set; }
+        public virtual FamilyHome Home { get; set; }
+
         public virtual ICollection<FamilyTreeLink> Siblings { get; set; }
         public virtual ICollection<FamilyTreeLink> CounterSiblings { get; set; }
 

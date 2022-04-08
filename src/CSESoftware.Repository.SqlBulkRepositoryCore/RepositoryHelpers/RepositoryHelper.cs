@@ -15,7 +15,7 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers
         /// operational data tables in the database.
         /// </summary>
         /// <typeparam name="TEntity">An entity that exists in the database</typeparam>
-        /// <typeparam name="TObject">An anonymous object with properties that match column names for the database object</typeparam>
+        /// <typeparam name="TObject">An anonymous object with properties that match column names or property names for the database object</typeparam>
         /// <param name="context">Database context necessary for column mapping</param>
         /// <param name="entity">A sample of the entity to be used for processing</param>
         /// <param name="operationObject">A sample of the anonymous object to be matched to the entity</param>
@@ -25,7 +25,9 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers
             TObject operationObject, OperationType type)
             where TEntity : IEntity
         {
-            var entityProperties = GetPropertyNames(entity);
+            if (entity == null) return string.Empty;
+
+            var entityProperties = RetrieveEntityColumnNames<TEntity>(context);
             var operationEntityProperties = GetPropertyNames(operationObject);
 
             return type == OperationType.Update
@@ -106,6 +108,36 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers
         }
 
         /// <summary>
+        /// This function provides a one or many key equality match for update query strings, where the property match in the
+        /// update generic object may match the database column name or clr type property name. If the table has a composite key,
+        /// string enforces a match on all relevant primary keys.
+        /// </summary>
+        /// <typeparam name="TEntity">An entity that exists in the database</typeparam>
+        /// <typeparam name="TObject">An anonymous object with properties that match column names or property names for the database object</typeparam>
+        /// <param name="context">The database context to query</param>
+        /// <param name="entity">A sample of the entity to be used for processing</param>
+        /// <param name="operationObject">A sample of the anonymous object to be matched to the entity</param>
+        /// <returns></returns>
+        internal static string GetUpdateKeyString<TEntity, TObject>(DbContext context, TEntity entity,
+            TObject operationObject)
+            where TEntity : IEntity
+        {
+            if (entity == null) return string.Empty;
+
+            var operationObjectProperties = GetPropertyNames(operationObject);
+            var entityProperties = RetrieveEntityColumnNames<TEntity>(context);
+            var primaryKeyColumns = GetPrimaryKeyNames<TEntity>(context);
+            var primaryKeyProperties = entityProperties.Where(x => primaryKeyColumns.Contains(x.Key))
+                .ToDictionary(x => x.Key, x => x.Value);
+
+            var returnList = operationObjectProperties.Where(x =>
+                    primaryKeyProperties.ContainsKey(x) || primaryKeyProperties.Values.Contains(x))
+                .Select(prop => ConstructMatchString(prop, entityProperties)).ToList();
+
+            return returnList.Count > 1 ? string.Join(" AND ", returnList) : returnList[0];
+        }
+
+        /// <summary>
         /// This function takes in a date and rounds it down to the preceding second. This is to counter DateTime comparison difficulties
         /// between CLR DateTime objects and SQL DateTime column data.
         /// </summary>
@@ -124,33 +156,47 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers
         }
 
         private static string AssembleUpdateColumnToColumnMatch<TEntity>(DbContext context,
-            ICollection<string> entityProperties, IEnumerable<string> updateProperties)
+            IReadOnlyDictionary<string, string> entityProperties, IEnumerable<string> updateProperties)
             where TEntity : IEntity
         {
-            var primaryKeys = context.Model.GetEntityTypes(typeof(TEntity))
-                .Select(x => x.FindPrimaryKey());
-            var primaryKeyColumns = primaryKeys.SelectMany(x => x.Properties)
-                .Select(x => x.Name).ToList();
+            var primaryKeyColumns = GetPrimaryKeyNames<TEntity>(context);
+            var primaryKeyProperties = entityProperties.Where(x => primaryKeyColumns.Contains(x.Key))
+                .ToDictionary(x => x.Key, x => x.Value);
 
             var returnList = updateProperties.Where(x =>
-                    entityProperties.Contains(x) && !primaryKeyColumns.Contains(x))
+                    !primaryKeyProperties.ContainsKey(x) && !primaryKeyProperties.Values.Contains(x) &&
+                    (entityProperties.ContainsKey(x) || entityProperties.Values.Contains(x)))
                 .Select(prop => ConstructMatchString(prop, entityProperties)).ToList();
 
             return string.Join(",", returnList);
         }
 
-        private static string AssembleSelectColumnToColumnMatch(ICollection<string> entityProperties,
+        private static string AssembleSelectColumnToColumnMatch(IReadOnlyDictionary<string, string> entityProperties,
             IEnumerable<string> selectProperties)
         {
-            var returnList = selectProperties.Where(entityProperties.Contains)
+            var returnList = selectProperties
+                .Where(x => entityProperties.Values.Contains(x) || entityProperties.ContainsKey(x))
                 .Select(prop => ConstructMatchString(prop, entityProperties)).ToList();
 
             return returnList.Count > 1 ? string.Join(" AND ", returnList) : returnList[0];
         }
 
-        private static string ConstructMatchString(string property, IEnumerable<string> possibleMatches)
+        private static List<string> GetPrimaryKeyNames<TEntity>(DbContext context)
+            where TEntity : IEntity
         {
-            var match = possibleMatches.First(x => x == property);
+            var primaryKeys = context.Model.GetEntityTypes(typeof(TEntity))
+                .Select(x => x.FindPrimaryKey());
+            return primaryKeys.SelectMany(x => x.Properties)
+                .Select(x => x.GetColumnName(StoreObjectIdentifier.Table(GetTableName<TEntity>(context), null)))
+                .ToList();
+        }
+
+        private static string ConstructMatchString(string property, IReadOnlyDictionary<string, string> possibleMatches)
+        {
+            var match = possibleMatches.ContainsKey(property)
+                ? possibleMatches.Keys.First(x => x == property)
+                : possibleMatches.First(x => x.Value == property).Key;
+
             return $"O.{match} = T.{property}";
         }
 
