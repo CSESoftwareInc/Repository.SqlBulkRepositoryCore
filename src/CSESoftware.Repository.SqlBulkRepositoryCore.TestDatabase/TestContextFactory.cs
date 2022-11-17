@@ -6,7 +6,7 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestDatabase
     public class TestContextFactory : IDesignTimeDbContextFactory<TestContext>
     {
         private const string ConnectionString =
-            "data source=.\\Development; initial catalog=TestDatabase; persist security info=True; Integrated Security=SSPI;";
+            "data source=.\\Development; initial catalog=TestDatabase; Trusted_Connection=True; TrustServerCertificate=True;";
 
         public TestContext CreateDbContext(string[] args)
         {
