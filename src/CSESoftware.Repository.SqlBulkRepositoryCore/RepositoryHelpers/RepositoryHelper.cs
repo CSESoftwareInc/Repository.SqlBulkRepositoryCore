@@ -86,7 +86,7 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers
             where TEntity : IEntity
         {
             var entityType = context.Model.FindEntityType(typeof(TEntity));
-            return entityType.GetTableName();
+            return entityType?.GetTableName() ?? string.Empty;
         }
 
         /// <summary>
@@ -100,9 +100,9 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers
             where TEntity : IEntity
         {
             var tableName = GetTableName<TEntity>(context);
-            var columns = context.Model.GetEntityTypes(typeof(TEntity))
+            var columns = context.Model.GetEntityTypes().Where(x => x.ClrType == typeof(TEntity))
                 .SelectMany(t => t.GetProperties())
-                .ToDictionary(x => x.GetColumnName(StoreObjectIdentifier.Table(tableName, null)), x => x.Name);
+                .ToDictionary(x => x.GetColumnName(StoreObjectIdentifier.Table(tableName)), x => x.Name);
 
             return columns;
         }
@@ -184,10 +184,10 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers
         private static List<string> GetPrimaryKeyNames<TEntity>(DbContext context)
             where TEntity : IEntity
         {
-            var primaryKeys = context.Model.GetEntityTypes(typeof(TEntity))
+            var primaryKeys = context.Model.GetEntityTypes().Where(x => x.ClrType == typeof(TEntity))
                 .Select(x => x.FindPrimaryKey());
-            return primaryKeys.SelectMany(x => x.Properties)
-                .Select(x => x.GetColumnName(StoreObjectIdentifier.Table(GetTableName<TEntity>(context), null)))
+            return primaryKeys.SelectMany(x => x?.Properties ?? new List<IProperty>())
+                .Select(x => x.GetColumnName(StoreObjectIdentifier.Table(GetTableName<TEntity>(context))))
                 .ToList();
         }
 
