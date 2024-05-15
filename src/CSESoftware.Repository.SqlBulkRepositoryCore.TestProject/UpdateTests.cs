@@ -16,7 +16,7 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestProject
             const string gender = "Passion Fruit";
             var trees = await TreeStartUpAsync();
             var operationValues = trees.Select(x => new { x.Id, Gender = gender }).ToList();
-            
+
             await Repository.BulkUpdateAsync(new FamilyTree(), operationValues);
             var returnValues = await GetUpdatedTreeValuesAsync(operationValues);
 

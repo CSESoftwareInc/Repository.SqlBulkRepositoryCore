@@ -3,7 +3,6 @@ using CSESoftware.Repository.SqlBulkRepositoryCore.TestProject.Setup;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,13 +12,16 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestProject
     {
         private const string Gender = "Potato";
 
-        [Fact]
-        public async Task SelectLoadTest()
+        [Theory]
+        [InlineData(20000)]
+        [InlineData(22000)]
+        [InlineData(24000)]
+        [InlineData(26000)]
+        [InlineData(28000)]
+        [InlineData(30000)]
+        public async Task SelectLoadTest(int load)
         {
-            //To avoid deadlocks in Unit Test execution, delay start of this test
-            Thread.Sleep(2000);
-
-            var trees = await PerformCreateAsync(120000);
+            var trees = await PerformCreateAsync(load);
             await PerformUpdateAsync(trees);
             var selectValues = await PerformSelectAsync(trees);
             await PerformDeleteAsync(trees);

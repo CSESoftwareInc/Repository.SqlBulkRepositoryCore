@@ -30,7 +30,7 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestProject.Setup
         internal async Task TearDownAsync(IEnumerable<FamilyHome> homes)
         {
             var homesToDelete = homes.Select(x => new { x.Id }).ToList();
-            
+
             if (homesToDelete.Any())
                 await Repository.BulkDeleteAsync(new FamilyHome(), homesToDelete);
         }

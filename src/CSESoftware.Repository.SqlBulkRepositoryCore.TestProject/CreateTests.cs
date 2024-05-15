@@ -93,7 +93,7 @@ namespace CSESoftware.Repository.SqlBulkRepositoryCore.TestProject
                 Assert.Equal(tree.MotherId, matchingTree.MotherId);
             }
         }
-        
+
         public static IEnumerable<object[]> NumberOfRecords =>
             new List<object[]>
             {
