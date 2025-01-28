@@ -83,7 +83,7 @@ internal static class RepositoryHelper
         where TEntity : IEntity
     {
         var entityType = context.Model.FindEntityType(typeof(TEntity));
-        return entityType?.GetTableName() ?? string.Empty;
+        return entityType?.GetTableName() ?? entityType?.GetViewName() ?? string.Empty;
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ internal static class RepositoryHelper
         var tableName = GetTableName<TEntity>(context);
         var columns = context.Model.GetEntityTypes().Where(x => x.ClrType == typeof(TEntity))
             .SelectMany(t => t.GetProperties())
-            .ToDictionary(x => x.GetColumnName(StoreObjectIdentifier.Table(tableName)) ?? string.Empty, x => x.Name);
+            .ToDictionary(x => x.GetProperColumnName(tableName), x => x.Name);
 
         return columns;
     }
@@ -144,13 +144,11 @@ internal static class RepositoryHelper
     {
         var span = new TimeSpan(0, 0, 1);
         var ticks = date.Ticks / span.Ticks;
-        return new DateTime(ticks * span.Ticks);
+        return new(ticks * span.Ticks);
     }
 
-    private static List<string> GetPropertyNames<T>(T sample)
-    {
-        return sample?.GetType().GetProperties().Select(x => x.Name).ToList() ?? [];
-    }
+    private static List<string> GetPropertyNames<T>(T sample) =>
+        sample?.GetType().GetProperties().Select(x => x.Name).ToList() ?? [];
 
     private static string AssembleUpdateColumnToColumnMatch<TEntity>(DbContext context,
         Dictionary<string, string> entityProperties, IEnumerable<string> updateProperties)
@@ -178,15 +176,19 @@ internal static class RepositoryHelper
         return returnList.Count > 1 ? string.Join(" AND ", returnList) : returnList[0];
     }
 
-    private static List<string?> GetPrimaryKeyNames<TEntity>(DbContext context)
+    private static List<string> GetPrimaryKeyNames<TEntity>(DbContext context)
         where TEntity : IEntity
     {
         var primaryKeys = context.Model.GetEntityTypes().Where(x => x.ClrType == typeof(TEntity))
             .Select(x => x.FindPrimaryKey());
         return primaryKeys.SelectMany(x => x?.Properties ?? new List<IProperty>())
-            .Select(x => x.GetColumnName(StoreObjectIdentifier.Table(GetTableName<TEntity>(context))))
+            .Select(x => x.GetProperColumnName(GetTableName<TEntity>(context)))
             .ToList();
     }
+
+    private static string GetProperColumnName(this IReadOnlyProperty property, string databaseName) =>
+        property.GetColumnName(StoreObjectIdentifier.Table(databaseName)) ??
+        property.GetColumnName(StoreObjectIdentifier.View(databaseName)) ?? string.Empty;
 
     private static string ConstructMatchString(string property, IReadOnlyDictionary<string, string> possibleMatches)
     {
@@ -207,11 +209,9 @@ internal static class RepositoryHelper
         return $"{propertyName} {finalPropertyType}";
     }
 
-    private static bool PropertyIsNullable(PropertyInfo property)
-    {
-        return property.PropertyType.IsGenericType &&
-               property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
-    }
+    private static bool PropertyIsNullable(PropertyInfo property) =>
+        property.PropertyType.IsGenericType &&
+        property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
 
     private static string ParseSqlType(string clrType, bool nullable = false)
     {
