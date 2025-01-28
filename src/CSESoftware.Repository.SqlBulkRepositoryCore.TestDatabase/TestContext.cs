@@ -47,6 +47,13 @@ public class TestContext(DbContextOptions options) : BaseDbContext(options)
         modelBuilder.Entity<FamilyHome>()
             .Property(x => x.Address).HasColumnName("Home_Address");
 
+        modelBuilder.Entity<FamilyHomeView>()
+            .ToView("FamilyHomeView").HasNoKey();
+        modelBuilder.Entity<FamilyHomeView>()
+            .Property(x => x.Name).HasColumnName("Home_Name");
+        modelBuilder.Entity<FamilyHomeView>()
+            .Property(x => x.Address).HasColumnName("Home_Address");
+
         var cascadeFKs = modelBuilder.Model.GetEntityTypes()
             .SelectMany(t => t.GetForeignKeys())
             .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade || fk.DeleteBehavior == DeleteBehavior.ClientSetNull);

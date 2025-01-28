@@ -39,6 +39,9 @@ internal static class DataProvider
         string address = "555 Quantum Place") =>
         Enumerable.Range(0, numberOfHomes).Select(x => GetHome($"{name} {x}", $"{address} Apt #{x}")).ToList();
 
+    internal static List<FamilyTree> GetTreesFromHomes(this IEnumerable<Guid> homeIds) =>
+        homeIds.Select(GetTreeFromHome).ToList();
+
     private static FamilyTree GetTree(DateTime birthdate, string gender = "Tomato", bool isAlive = true) => new()
     {
         Id = Guid.NewGuid(),
@@ -85,5 +88,17 @@ internal static class DataProvider
         Name = name,
         Address = address,
         Families = []
+    };
+
+    private static FamilyTree GetTreeFromHome(Guid homeId) => new()
+    {
+        Id = Guid.NewGuid(),
+        IsActive = true,
+        CreatedDate = DateTime.Now,
+        ModifiedDate = DateTime.Now,
+        IsAlive = true,
+        Gender = "Banana",
+        Birthdate = DateTime.Now.AddYears(-2),
+        HomeId = homeId
     };
 }
