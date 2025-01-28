@@ -1,29 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Authors>CSESoftware, Inc.</Authors>
     <Company>CSESoftware, Inc.</Company>
-    <Version>2.0.0</Version>
+    <Version>3.0.0-beta01</Version>
     <Description>An Entity Framework Core repository utilizing SqlBulkCopy to perform operations on large datasets.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Copyright>2022 CSE Software, Inc.</Copyright>
+    <Copyright>2025 CSE Software, Inc.</Copyright>
     <PackageProjectUrl>https://github.com/CSESoftwareInc/Repository.SqlBulkRepositoryCore</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CSESoftwareInc/Repository.SqlBulkRepositoryCore.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>EntityFrameworkCore, net6.0, SqlBulkCopy</PackageTags>
+    <PackageTags>EntityFrameworkCore, net8.0, SqlBulkCopy</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>packageIcon.png</PackageIcon>
+    <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+	<Nullable>enable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CSESoftware.Repository.EntityFrameworkCore" Version="2.2.0" />
+    <PackageReference Include="CSESoftware.Repository.EntityFrameworkCore" Version="2.4.0" />
     <PackageReference Include="FastMember" Version="1.5.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\ReadMe.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="packageIcon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
