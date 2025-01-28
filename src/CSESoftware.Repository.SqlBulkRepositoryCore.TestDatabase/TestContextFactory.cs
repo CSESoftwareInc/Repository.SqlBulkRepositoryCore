@@ -13,6 +13,6 @@ public class TestContextFactory : IDesignTimeDbContextFactory<TestContext>
         var optionsBuilder = new DbContextOptionsBuilder<TestContext>();
         optionsBuilder.UseSqlServer(ConnectionString);
 
-        return new TestContext(optionsBuilder.Options);
+        return new(optionsBuilder.Options);
     }
 }

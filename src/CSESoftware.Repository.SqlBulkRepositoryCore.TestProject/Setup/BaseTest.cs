@@ -37,6 +37,6 @@ public abstract class BaseTest
     private static BulkRepository<TestContext> GetRepository()
     {
         var context = new TestContextFactory().CreateDbContext([]);
-        return new BulkRepository<TestContext>(context);
+        return new(context);
     }
 }
