@@ -1,12 +1,9 @@
-﻿using System;
+﻿namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers;
 
-namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers
+internal class BulkRepositoryException : Exception
 {
-    internal class BulkRepositoryException : Exception
+    internal BulkRepositoryException(string message = "Error within the Bulk Repository.", Exception? exception = null) :
+        base(message, exception)
     {
-        internal BulkRepositoryException(string message = "Error within the Bulk Repository.", Exception exception = null) :
-            base(message, exception)
-        {
-        }
     }
 }

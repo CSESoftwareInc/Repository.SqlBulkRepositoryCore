@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30717.126
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35431.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSESoftware.Repository.SqlBulkRepositoryCore", "CSESoftware.Repository.SqlBulkRepositoryCore\CSESoftware.Repository.SqlBulkRepositoryCore.csproj", "{02577B2B-210E-4353-BA38-32A11DC56E93}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSESoftware.Repository.SqlBulkRepositoryCore.TestProject", "CSESoftware.Repository.SqlBulkRepositoryCore.TestProject\CSESoftware.Repository.SqlBulkRepositoryCore.TestProject.csproj", "{D7C2257A-0910-433A-9017-39ABEDF15843}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSESoftware.Repository.SqlBulkRepositoryCore.TestDatabase", "CSESoftware.Repository.SqlBulkRepositoryCore.TestDatabase\CSESoftware.Repository.SqlBulkRepositoryCore.TestDatabase.csproj", "{93FE678D-190C-45E9-BB44-D8E841B558D6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D31CA186-A64B-4F5A-BB9D-C203B86DEFBB}"
+	ProjectSection(SolutionItems) = preProject
+		..\ReadMe.md = ..\ReadMe.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

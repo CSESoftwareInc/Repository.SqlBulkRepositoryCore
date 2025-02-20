@@ -1,9 +1,8 @@
-﻿namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers
+﻿namespace CSESoftware.Repository.SqlBulkRepositoryCore.RepositoryHelpers;
+
+internal enum OperationType
 {
-    internal enum OperationType
-    {
-        Select,
-        Update,
-        Delete
-    }
+    Select,
+    Update,
+    Delete
 }
